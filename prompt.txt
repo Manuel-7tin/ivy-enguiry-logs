@@ -40,7 +40,7 @@ Field descriptions:
   The date the enquiry took place, if explicitly mentioned.
 
 - customer_name:
-  The full name of the prospective student or customer.
+  The full name of the prospective student or customer. Do not join first and lastname together without a space.
 
 - mode_of_reaching_out:
   How the customer initially contacted the organization, such as WhatsApp, Phone Call, Email, Instagram, Facebook, Walk-in, Website, Referral, etc.

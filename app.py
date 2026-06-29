@@ -147,6 +147,10 @@ REQUIRED_FIELDS = {
 
     "customer_name": "Customer Full Name",
 
+    "enquiry_date": "Date of Enquiry",
+
+    "mode_of_reaching_out": "Mode of contact",
+
     "customer_interest": "Customer Interest",
 
     "nature_of_enquiry": "Nature of Enquiry",
@@ -367,20 +371,9 @@ def required_fields_complete(data= st.session_state.submission_data):
     """
     Checks mandatory fields.
     """
-
-    required = [
-        "staff_name",
-        "customer_name",
-        "enquiry_date",
-        "mode_of_reaching_out",
-        "customer_interest",
-        "nature_of_enquiry",
-        "status"
-
-    ]
-
-    errors = [f"{field} is required" for field in required if str(data.get(field, "")).strip() == ""]
-    errors += ["Phone or Email is required"] if not (data.get("phone") or data.get("email")) else []
+    missing = get_missing_fields(data)
+    errors = [f"{field} is required" for field in missing if str(data.get(field, "")).strip() == ""]
+    # errors += ["Phone or Email is required"] if not (data.get("phone") or data.get("email")) else []
     return len(errors) == 0, errors
 
 
@@ -999,21 +992,19 @@ def get_missing_fields(data):
     for key in REQUIRED_FIELDS:
 
         value = str(
-            data.get(key, "")
+            data.get(key, "") or ""
         ).strip()
 
-        if value == "":
+        if not value:
             missing.append(key)
 
     # Phone OR Email
+    phone = (data.get("phone", "") or "").strip()
 
-    phone = data.get("phone", "").strip()
+    email = (data.get("email", "") or "").strip()
 
-    email = data.get("email", "").strip()
-
-    if phone == "" and email == "":
-
-        missing.append("contact")
+    if not phone and not email:
+        missing.append("Phone or Email")
 
     return missing
 
@@ -1368,6 +1359,7 @@ def voice_mode():
                     st.session_state.submission_data
                 )
 
+
                 status.update(
 
                     label="✅ Recording Processed",
@@ -1375,137 +1367,96 @@ def voice_mode():
                     state="complete"
 
                 )
-        # microphone()
-        #
-        # loader("Uploading recording...")
-        #
-        # time.sleep(1)
-        #
-        # upload_audio(
-        #
-        #     st.session_state.audio_file
-        #
-        # )
-        #
-        # loader("Analyzing speech...")
-        #
-        # time.sleep(2)
-        #
-        # parsed = parse_audio(
-        #
-        #     st.session_state.audio_file
-        #
-        # )
-
-        # Populate submission_data
-
-        # for key, value in parsed.items():
-        #
-        #     if key in st.session_state.submission_data:
-        #
-        #         st.session_state.submission_data[key] = value
-        #
         # st.session_state.processing = False
 
             st.success(
                 "Recording processed successfully!"
             )
 
-        st.rerun()
+            # -------------------------------------------------
+            # Missing Fields
+            # -------------------------------------------------
 
-    # -------------------------------------------------
-    # Missing Fields
-    # -------------------------------------------------
+            if st.session_state.missing_fields:
+                # divider()
+                form_mode(redirection=True)
+            else:
+                navigate("success")
 
-    if st.session_state.missing_fields:
 
-        divider()
-
-        section_header(
-            "Additional Information Required",
-            "⚠️"
-        )
-
-        st.info(
-            "We extracted most of the enquiry automatically. "
-            "Please complete the remaining fields below."
-        )
-
-        data = st.session_state.submission_data
-
-        if "staff_name" in st.session_state.missing_fields:
-            data["staff_name"] = st.text_input(
-                "Staff Name *",
-                value=data["staff_name"]
-            )
-
-        if "customer_name" in st.session_state.missing_fields:
-            data["customer_name"] = st.text_input(
-                "Customer Full Name *",
-                value=data["customer_name"]
-            )
-
-        if "customer_interest" in st.session_state.missing_fields:
-            data["customer_interest"] = st.text_area(
-                "Customer Interest *",
-                value=data["customer_interest"]
-            )
-
-        if "nature_of_enquiry" in st.session_state.missing_fields:
-            data["nature_of_enquiry"] = st.text_area(
-                "Nature of Enquiry *",
-                value=data["nature_of_enquiry"]
-            )
-
-        if "status" in st.session_state.missing_fields:
-
-            options = [
-
-                "New",
-
-                "Pending",
-
-                "In Progress",
-
-                "Escalated",
-
-                "Resolved",
-
-                "Closed"
-
-            ]
-
-            current = data["status"]
-
-            if current not in options:
-                current = "New"
-
-            data["status"] = st.selectbox(
-
-                "Status",
-
-                options,
-
-                index=options.index(current)
-
-            )
-
-        if "contact" in st.session_state.missing_fields:
-            phone_col, email_col = st.columns(2)
-
-            with phone_col:
-                data["phone"] = st.text_input(
-
-                    "Phone Number"
-
-                )
-
-            with email_col:
-                data["email"] = st.text_input(
-
-                    "Email Address"
-
-                )
+        # if "staff_name" in st.session_state.missing_fields:
+        #     data["staff_name"] = st.text_input(
+        #         "Staff Name *",
+        #         value=data["staff_name"]
+        #     )
+        #
+        # if "customer_name" in st.session_state.missing_fields:
+        #     data["customer_name"] = st.text_input(
+        #         "Customer Full Name *",
+        #         value=data["customer_name"]
+        #     )
+        #
+        # if "customer_interest" in st.session_state.missing_fields:
+        #     data["customer_interest"] = st.text_area(
+        #         "Customer Interest *",
+        #         value=data["customer_interest"]
+        #     )
+        #
+        # if "nature_of_enquiry" in st.session_state.missing_fields:
+        #     data["nature_of_enquiry"] = st.text_area(
+        #         "Nature of Enquiry *",
+        #         value=data["nature_of_enquiry"]
+        #     )
+        #
+        # if "status" in st.session_state.missing_fields:
+        #
+        #     options = [
+        #
+        #         "New",
+        #
+        #         "Pending",
+        #
+        #         "In Progress",
+        #
+        #         "Escalated",
+        #
+        #         "Resolved",
+        #
+        #         "Closed"
+        #
+        #     ]
+        #
+        #     current = data["status"]
+        #
+        #     if current not in options:
+        #         current = "New"
+        #
+        #     data["status"] = st.selectbox(
+        #
+        #         "Status",
+        #
+        #         options,
+        #
+        #         index=options.index(current)
+        #
+        #     )
+        #
+        # if "contact" in st.session_state.missing_fields:
+        #     phone_col, email_col = st.columns(2)
+        #
+        #     with phone_col:
+        #         data["phone"] = st.text_input(
+        #
+        #             "Phone Number"
+        #
+        #         )
+        #
+        #     with email_col:
+        #         data["email"] = st.text_input(
+        #
+        #             "Email Address"
+        #
+        #         )
 
     divider()
 
@@ -1545,7 +1496,7 @@ def voice_mode():
                 navigate("failure")
 
 
-def form_mode():
+def form_mode(redirection=False):
     """
     Placeholder Form Mode page.
     """
@@ -1553,12 +1504,22 @@ def form_mode():
     background()
 
     company_logo()
+    if redirection:
+        section_header(
+            "Additional Information Required",
+            "⚠️"
+        )
 
-    hero(
-        title="Form Mode",
-        subtitle="Fill in the enquiry manually.",
-        signature=""
-    )
+        st.info(
+            "We extracted most of the enquiry automatically. "
+            "Please complete the remaining fields below."
+        )
+    else:
+        hero(
+            title="Form Mode",
+            subtitle="Fill in the enquiry manually.",
+            signature=""
+        )
     employee_section()
 
     divider()
@@ -1580,7 +1541,9 @@ def form_mode():
     if is_valid and contact_information_valid(data.get("phone", "08169957942"), data.get("email", "eguio@gmail.com")):
         pass
     else:
-        errors.append("Ensure the email and phone number are valid!")
+        is_valid = False
+        errors.append("Ensure the email and/or phone number is valid!")
+
     if errors:
         st.warning("Please resolve the following issues:")
 
