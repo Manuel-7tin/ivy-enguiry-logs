@@ -24,6 +24,7 @@ import time
 import uuid
 
 import streamlit as st
+import pandas as pd
 from streamlit_mic_recorder import mic_recorder
 
 
@@ -205,6 +206,24 @@ def save_enquiry(data):
     Pretend to save an enquiry.
     """
 
+    new_row = {
+        "Staff": "John Doe",
+        "Date of Enquiry": "2026-06-29",
+        "Full Name": "Jane Smith",
+        "How did the student reach out": "WhatsApp",
+        "Phone number": "+2348012345678",
+        "Email": "jane@example.com",
+        "Other contact details e.g. SM page": "@janesmith",
+        "Interested in?": "Data Science",
+        "Nature of enquiries": "Tuition fees and course duration",
+        "Status": "Pending",
+        "Follow up action required": "Call on Wednesday"
+    }
+
+    df = pd.read_excel("enq.xlsx")
+    df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
+    df.to_excel("enq.xlsx", index=False)
+
     return {
 
         "success": True,
@@ -305,20 +324,19 @@ def required_fields_complete(data):
     """
 
     required = [
-
         "staff_name",
-
-        "customer_name"
+        "customer_name",
+        "enquiry_date",
+        "mode_of_reaching_out",
+        "customer_interest",
+        "nature_of_enquiry",
+        "status"
 
     ]
 
-    return all(
-
-        str(data.get(field, "")).strip()
-
-        for field in required
-
-    )
+    errors = [f"{field} is required" for field in required if str(data.get(field, "")).strip() == ""]
+    errors += ["Phone or Email is required"] if not (data.get("phone") or data.get("email")) else []
+    return len(errors) == 0, errors
 
 
 # ==========================================================
@@ -1526,10 +1544,28 @@ def form_mode():
 
     divider()
 
+    data = st.session_state.submission_data
+    is_valid, errors = required_fields_complete(data)
+    if is_valid and contact_information_valid(data.get("phone", "08169957942"), data.get("email", "eguio@gmail.com")):
+        pass
+    else:
+        errors.append("Ensure the email and phone number are valid!")
+    if errors:
+        st.warning("Please resolve the following issues:")
+
+        for error in errors:
+            st.write(f"• {error}")
+
+    st.button(
+        "💾 Submit",
+        disabled=not is_valid,
+        use_container_width=True,
+    )
+
     # validation_panel()
 
 #     form_actions()
-
+    divider()
     if st.button(
         "⬅ Back",
         use_container_width=True
