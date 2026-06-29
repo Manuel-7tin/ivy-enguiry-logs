@@ -22,12 +22,17 @@ from datetime import date, datetime
 import re
 import time
 import uuid
+import json
+from json import JSONDecodeError
 
 import streamlit as st
 import pandas as pd
+from groq import Groq
+from dotenv import load_dotenv
 from streamlit_mic_recorder import mic_recorder
 
 
+load_dotenv()
 # ==========================================================
 # PAGE CONFIGURATION
 # ==========================================================
@@ -135,6 +140,20 @@ card_class = (
     if st.session_state.mode == "voice"
     else "glass"
 )
+
+REQUIRED_FIELDS = {
+
+    "staff_name": "Staff Name",
+
+    "customer_name": "Customer Full Name",
+
+    "customer_interest": "Customer Interest",
+
+    "nature_of_enquiry": "Nature of Enquiry",
+
+    "status": "Status"
+
+}
 # ==========================================================
 # PLACEHOLDER BACKEND
 # ==========================================================
@@ -149,13 +168,12 @@ def download_enquiries():
 
 def upload_audio(audio):
     """
-    Pretend to upload audio.
+    Upload audio.
 
     Returns
     -------
     dict
     """
-
     return {
 
         "success": True,
@@ -177,28 +195,49 @@ def generate_presigned_url(file):
 
 def parse_audio(audio):
     """
-    Pretend to extract information from speech.
+    Extract information from speech.
 
     Replace with Whisper or another speech model.
     """
 
-    return {
 
-        "staff_name": "John Doe",
+    client = Groq()
 
-        "customer_name": "Jane Smith",
+    transcription = client.audio.transcriptions.create(
+        file=("audio.wav", st.session_state.audio_file["bytes"]),
+        model="whisper-large-v3-turbo",
+        temperature=0,
+        response_format="verbose_json",
+    )
+    print(transcription.text)
 
-        "phone": "",
-
-        "email": "",
-
-        "interest":
-            "Interested in our consulting services.",
-
-        "status":
-            "New"
-
-    }
+    message = "This is lucky, i just spoke to EmmanuelEbi-Fredrick, he called to find out what our lecture plan is like, his email is oled@gmail.com and i have plans to send him a file later"
+    with open("prompt.txt", mode="r") as f:
+        prompt = f.read()
+    prompt = prompt.replace("{TRANSCRIPT}", message)
+    completion = client.chat.completions.create(
+        model="openai/gpt-oss-120b",
+        messages=[
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
+        temperature=0.6,
+        max_completion_tokens=4096,
+        top_p=0.95,
+        stream=True,
+        stop=None,
+    )
+    response = ""
+    for i, chunk in enumerate(completion):
+        response += chunk.choices[0].delta.content or ""
+    response = None if response == "" else response
+    try:
+        return json.loads(response)
+    except JSONDecodeError:
+        print("DecodeError", response)
+        return {"failed": response}
 
 
 def save_enquiry(data = st.session_state.submission_data):
@@ -947,20 +986,6 @@ def mode_selection():
 # ==========================================================
 # MISSING FIELD DETECTION
 # ==========================================================
-
-REQUIRED_FIELDS = {
-
-    "staff_name": "Staff Name",
-
-    "customer_name": "Customer Full Name",
-
-    "customer_interest": "Customer Interest",
-
-    "nature_of_enquiry": "Nature of Enquiry",
-
-    "status": "Status"
-
-}
 
 
 def get_missing_fields(data):
