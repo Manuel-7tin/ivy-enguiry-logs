@@ -1,0 +1,720 @@
+/* ==========================================================
+   IVY LEAGUE ASSOCIATES
+   Premium Streamlit Theme
+   Inspired by Stripe • Linear • Framer • Notion
+========================================================== */
+
+/* ----------------------------
+   Google Font
+---------------------------- */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Caveat:wght@500&display=swap');
+
+
+/* ----------------------------
+   Root Variables
+---------------------------- */
+
+:root{
+
+    --navy:#0F172A;
+    --navy-light:#1E293B;
+
+    --cyan:#22D3EE;
+    --cyan-dark:#06B6D4;
+
+    --white:#FFFFFF;
+    --gray:#F8FAFC;
+    --gray2:#CBD5E1;
+    --text:#E2E8F0;
+
+    --radius:18px;
+
+    --shadow:
+        0 8px 30px rgba(0,0,0,.12);
+
+}
+
+
+/* ----------------------------
+   App Background
+---------------------------- */
+
+html,
+body,
+[class*="css"]{
+
+    font-family:Inter,sans-serif;
+
+}
+
+
+.stApp{
+
+    background:
+        radial-gradient(circle at top left,#1d4ed822,transparent 35%),
+        radial-gradient(circle at bottom right,#22d3ee22,transparent 35%),
+        linear-gradient(135deg,#08111F,#0F172A);
+
+    color:var(--text);
+
+}
+
+
+/* Hide Streamlit Branding */
+
+#MainMenu,
+footer,
+header{
+
+    visibility:hidden;
+
+}
+
+
+/* ----------------------------
+   Animated Background Blobs
+---------------------------- */
+
+.background-blur{
+
+    position:fixed;
+
+    width:420px;
+    height:420px;
+
+    border-radius:50%;
+
+    filter:blur(100px);
+
+    opacity:.18;
+
+    z-index:-1;
+
+}
+
+
+.blob1{
+
+    top:-120px;
+    left:-120px;
+
+    background:#22D3EE;
+
+    animation:floatOne 14s ease-in-out infinite;
+
+}
+
+
+.blob2{
+
+    bottom:-150px;
+    right:-120px;
+
+    background:#2563EB;
+
+    animation:floatTwo 16s ease-in-out infinite;
+
+}
+
+
+@keyframes floatOne{
+
+0%{
+transform:translate(0,0);
+}
+
+50%{
+transform:translate(60px,40px);
+}
+
+100%{
+transform:translate(0,0);
+}
+
+}
+
+
+@keyframes floatTwo{
+
+0%{
+transform:translate(0,0);
+}
+
+50%{
+transform:translate(-70px,-50px);
+}
+
+100%{
+transform:translate(0,0);
+}
+
+}
+
+
+/* ----------------------------
+   Glass Cards
+---------------------------- */
+
+.glass{
+
+    background:rgba(255,255,255,.06);
+
+    backdrop-filter:blur(18px);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:var(--radius);
+
+    padding:32px;
+
+    box-shadow:var(--shadow);
+
+    transition:.35s;
+
+}
+
+
+.glass:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:
+    0 20px 45px rgba(0,0,0,.25);
+
+}
+
+
+/* ----------------------------
+   Headings
+---------------------------- */
+
+h1{
+
+    color:white;
+
+    font-weight:800;
+
+    letter-spacing:-1px;
+
+}
+
+
+h2{
+
+    color:white;
+
+    font-weight:700;
+
+}
+
+
+h3{
+
+    color:white;
+
+}
+
+
+/* ----------------------------
+   Paragraphs
+---------------------------- */
+
+p{
+
+    color:#CBD5E1;
+
+    line-height:1.7;
+
+}
+
+
+/* ----------------------------
+   Elegant Signature Text
+---------------------------- */
+
+.signature{
+
+    font-family:'Caveat',cursive;
+
+    color:#A5F3FC;
+
+    font-size:1.4rem;
+
+    margin-top:10px;
+
+}
+
+
+/* ----------------------------
+   Buttons
+---------------------------- */
+
+.stButton>button{
+
+    width:100%;
+
+    border-radius:14px;
+
+    border:none;
+
+    padding:.9rem 1.2rem;
+
+    font-size:15px;
+
+    font-weight:700;
+
+    background:linear-gradient(
+        90deg,
+        var(--cyan),
+        var(--cyan-dark)
+    );
+
+    color:white;
+
+    transition:.3s;
+
+    box-shadow:
+    0 8px 20px rgba(34,211,238,.25);
+
+}
+
+
+.stButton>button:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:
+    0 12px 28px rgba(34,211,238,.40);
+
+}
+
+
+.stButton>button:disabled{
+
+    background:#475569;
+
+    color:#94A3B8;
+
+}
+
+
+/* Secondary Button */
+
+.secondary button{
+
+    background:transparent !important;
+
+    color:white !important;
+
+    border:1px solid #334155 !important;
+
+    box-shadow:none !important;
+
+}
+
+.secondary button:hover{
+
+    background:#1E293B !important;
+
+}
+
+
+/* ----------------------------
+   Inputs
+---------------------------- */
+
+.stTextInput input,
+.stTextArea textarea,
+.stSelectbox div[data-baseweb="select"],
+.stDateInput input{
+
+    border-radius:14px !important;
+
+    border:1px solid #334155 !important;
+
+    background:#162132 !important;
+
+    color:white !important;
+
+}
+
+
+.stTextInput input:focus,
+textarea:focus{
+
+    border:1px solid var(--cyan) !important;
+
+    box-shadow:
+    0 0 0 3px rgba(34,211,238,.18);
+
+}
+
+
+/* ----------------------------
+   Labels
+---------------------------- */
+
+label{
+
+    color:white !important;
+
+    font-weight:600;
+
+}
+
+
+/* ----------------------------
+   Section Cards
+---------------------------- */
+
+.section{
+
+    margin-top:18px;
+
+    margin-bottom:18px;
+
+    padding:25px;
+
+    border-radius:18px;
+
+    background:#132033;
+
+    border:1px solid rgba(255,255,255,.06);
+
+}
+
+
+/* ----------------------------
+   Logo
+---------------------------- */
+
+.logo{
+
+    width:130px;
+
+    display:block;
+
+    margin:auto;
+
+    margin-bottom:20px;
+
+}
+
+
+/* ----------------------------
+   Success Card
+---------------------------- */
+
+.success-card{
+
+    background:rgba(16,185,129,.12);
+
+    border:1px solid #10B981;
+
+    border-radius:18px;
+
+    padding:30px;
+
+    text-align:center;
+
+}
+
+
+/* ----------------------------
+   Error Card
+---------------------------- */
+
+.error-card{
+
+    background:rgba(239,68,68,.12);
+
+    border:1px solid #EF4444;
+
+    border-radius:18px;
+
+    padding:30px;
+
+    text-align:center;
+
+}
+
+
+/* ----------------------------
+   Status Badge
+---------------------------- */
+
+.badge{
+
+    display:inline-block;
+
+    padding:7px 14px;
+
+    border-radius:999px;
+
+    background:#0EA5E9;
+
+    color:white;
+
+    font-size:13px;
+
+    font-weight:700;
+
+}
+
+
+/* ----------------------------
+   Animated Pulse
+---------------------------- */
+
+.pulse{
+
+    width:18px;
+
+    height:18px;
+
+    border-radius:50%;
+
+    background:#22D3EE;
+
+    margin:auto;
+
+    animation:pulse 1.5s infinite;
+
+}
+
+
+@keyframes pulse{
+
+0%{
+
+transform:scale(.95);
+
+box-shadow:0 0 0 0 rgba(34,211,238,.6);
+
+}
+
+70%{
+
+transform:scale(1);
+
+box-shadow:0 0 0 18px rgba(34,211,238,0);
+
+}
+
+100%{
+
+transform:scale(.95);
+
+}
+
+}
+
+
+/* ----------------------------
+   Floating Animation
+---------------------------- */
+
+.float{
+
+    animation:floating 4s ease-in-out infinite;
+
+}
+
+@keyframes floating{
+
+0%{
+
+transform:translateY(0);
+
+}
+
+50%{
+
+transform:translateY(-10px);
+
+}
+
+100%{
+
+transform:translateY(0);
+
+}
+
+}
+
+
+/* ----------------------------
+   Loading Spinner
+---------------------------- */
+
+.loader{
+
+    width:55px;
+
+    height:55px;
+
+    border-radius:50%;
+
+    border:5px solid rgba(255,255,255,.15);
+
+    border-top:5px solid var(--cyan);
+
+    margin:auto;
+
+    animation:spin 1s linear infinite;
+
+}
+
+@keyframes spin{
+
+100%{
+
+transform:rotate(360deg);
+
+}
+
+}
+
+
+/* ----------------------------
+   Divider
+---------------------------- */
+
+.divider{
+
+    height:1px;
+
+    background:rgba(255,255,255,.08);
+
+    margin:30px 0;
+
+}
+
+
+/* ----------------------------
+   Scrollbar
+---------------------------- */
+
+::-webkit-scrollbar{
+
+    width:10px;
+
+}
+
+::-webkit-scrollbar-track{
+
+    background:#111827;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:#334155;
+
+    border-radius:20px;
+
+}
+
+::-webkit-scrollbar-thumb:hover{
+
+    background:#22D3EE;
+
+}
+
+
+/* ----------------------------
+   Footer Text
+---------------------------- */
+
+.footer{
+
+    text-align:center;
+
+    color:#94A3B8;
+
+    margin-top:30px;
+
+    font-size:13px;
+
+}
+
+
+/* ----------------------------
+   Responsive
+---------------------------- */
+
+@media(max-width:768px){
+
+.glass{
+
+padding:20px;
+
+}
+
+h1{
+
+font-size:2rem;
+
+}
+
+.signature{
+
+font-size:1.2rem;
+
+}
+
+.stButton button{
+
+font-size:14px;
+
+}
+
+.selected-card{
+
+    background:rgba(34,211,238,.14);
+
+    border:2px solid #22D3EE;
+
+    box-shadow:
+        0 0 30px rgba(34,211,238,.18);
+
+}
+
+/* ===========================================
+   Hero
+=========================================== */
+
+.hero-title{
+    font-size:3.3rem;
+    font-weight:800;
+    line-height:1.1;
+    margin-bottom:12px;
+}
+
+.hero-gradient{
+
+    background:linear-gradient(
+        135deg,
+        #FFFFFF,
+        #22D3EE
+    );
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+.hero-subtitle{
+
+    color:#CBD5E1;
+
+    font-size:1.15rem;
+
+    max-width:720px;
+
+    margin:auto;
+
+    line-height:1.8;
+
+}
+}
