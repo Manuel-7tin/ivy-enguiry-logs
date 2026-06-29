@@ -18,7 +18,7 @@ Replace them with real API/database calls later.
 # ==========================================================
 
 from pathlib import Path
-from datetime import date
+from datetime import date, datetime
 import re
 import time
 import uuid
@@ -201,37 +201,43 @@ def parse_audio(audio):
     }
 
 
-def save_enquiry(data):
+def save_enquiry(data = st.session_state.submission_data):
     """
     Pretend to save an enquiry.
     """
 
+    id_ = datetime.now().strftime("%Y%m%d%H:%M")
     new_row = {
-        "Staff": "John Doe",
-        "Date of Enquiry": "2026-06-29",
-        "Full Name": "Jane Smith",
-        "How did the student reach out": "WhatsApp",
-        "Phone number": "+2348012345678",
-        "Email": "jane@example.com",
-        "Other contact details e.g. SM page": "@janesmith",
-        "Interested in?": "Data Science",
-        "Nature of enquiries": "Tuition fees and course duration",
-        "Status": "Pending",
-        "Follow up action required": "Call on Wednesday"
+        "Submission ID": id_,
+        "Staff": data.get("staff_name"),
+        "Date of Enquiry": data.get("enquiry_date"),
+        "Full Name": data.get("customer_name"),
+        "How did the student reach out": data.get("mode_of_reaching_out"),
+        "Phone number": data.get("phone"),
+        "Email": data.get("email"),
+        "Other contact details e.g. SM page": data.get("other_contact"),
+        "Interested in?": data.get("customer_interest"),
+        "Nature of enquiries": data.get("nature_of_enquiry"),
+        "Status": data.get("status"),
+        "Follow up action required": data.get("follow_up_action")
     }
 
-    df = pd.read_excel("enq.xlsx")
-    df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
-    df.to_excel("enq.xlsx", index=False)
-
-    return {
-
-        "success": True,
-
-        "submission_id":
-            f"IVY-{uuid.uuid4().hex[:8].upper()}"
-
-    }
+    try:
+        df = pd.read_excel("enq.xlsx")
+        df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
+        df.to_excel("enq.xlsx", index=False)
+    except Exception as e:
+        return False, "00000"
+    else:
+        return True, id_
+    # return {
+    #
+    #     "success": True,
+    #
+    #     "submission_id":
+    #         f"IVY-{uuid.uuid4().hex[:8].upper()}"
+    #
+    # }
 
 
 # ==========================================================
@@ -318,7 +324,7 @@ def contact_information_valid(
     return True
 
 
-def required_fields_complete(data):
+def required_fields_complete(data= st.session_state.submission_data):
     """
     Checks mandatory fields.
     """
@@ -614,9 +620,9 @@ def status_message(
         f"""
         <div class="{css}">
 
-            <h2>{title}</h2>
+        <h2>{title}</h2>
 
-            <p>{message}</p>
+        <p>{message}</p>
 
         </div>
         """,
@@ -1545,7 +1551,7 @@ def form_mode():
     divider()
 
     data = st.session_state.submission_data
-    is_valid, errors = required_fields_complete(data)
+    is_valid, errors = required_fields_complete()
     if is_valid and contact_information_valid(data.get("phone", "08169957942"), data.get("email", "eguio@gmail.com")):
         pass
     else:
@@ -1556,11 +1562,19 @@ def form_mode():
         for error in errors:
             st.write(f"• {error}")
 
-    st.button(
+    if st.button(
         "💾 Submit",
         disabled=not is_valid,
         use_container_width=True,
-    )
+    ):
+        result = save_enquiry()
+        if result[0]:
+            st.session_state.submission_id = result[1]
+            st.session_state.page = "success"
+            st.rerun()
+        else:
+            st.session_state.page = "failure"
+            st.rerun()
 
     # validation_panel()
 
@@ -1743,3 +1757,7 @@ elif st.session_state.page == "form":
     form_mode()
 elif st.session_state.page == "mode":
     mode_selection()
+elif st.session_state.page == "success":
+    success_page()
+elif st.session_state.page == "failure":
+    failure_page()
