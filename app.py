@@ -927,9 +927,11 @@ def mode_selection():
             <h3>📝 Form Mode</h3>
 
             <p>
-            Manually complete the enquiry form
-            section by section with full control
-            over every field.
+            Complete the enquiry form manually, 
+            one section at a time, with full control 
+            over every field, allowing you to review, 
+            customize, and enter each detail exactly 
+            as required.
             </p>
 
             </div>
