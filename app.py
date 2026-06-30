@@ -374,7 +374,7 @@ def required_fields_complete(data= st.session_state.submission_data):
     Checks mandatory fields.
     """
     missing = get_missing_fields(data)
-    errors = [f"{field} is required" for field in missing if str(data.get(field, "")).strip() == ""]
+    errors = [f"{field} is required" for field in missing] # if str(data.get(field, "")).strip() == ""]
     # errors += ["Phone or Email is required"] if not (data.get("phone") or data.get("email")) else []
     return len(errors) == 0, errors
 
@@ -991,14 +991,14 @@ def get_missing_fields(data):
 
     missing = []
 
-    for key in REQUIRED_FIELDS:
+    for key, desc in REQUIRED_FIELDS.items():
 
         value = str(
             data.get(key, "") or ""
         ).strip()
 
         if not value:
-            missing.append(key)
+            missing.append(desc)
 
     # Phone OR Email
     phone = (data.get("phone", "") or "").strip()
@@ -1541,6 +1541,7 @@ def form_mode():
 
     data = st.session_state.submission_data
     is_valid, errors = required_fields_complete()
+    print(is_valid, errors)
     if is_valid and contact_information_valid(data.get("phone", "08169957942"), data.get("email", "eguio@gmail.com")):
         pass
     else:
