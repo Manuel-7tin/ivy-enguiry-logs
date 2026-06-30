@@ -88,6 +88,8 @@ DEFAULT_SESSION = {
 
     "mode": None,
 
+    "redirect": False,
+
     "processing": False,
 
     "audio_file": None,
@@ -1379,7 +1381,8 @@ def voice_mode():
 
             if st.session_state.missing_fields:
                 # divider()
-                form_mode(redirection=True)
+                st.session_state.redirect = True
+                navigate("form")
             else:
                 navigate("success")
 
@@ -1496,7 +1499,7 @@ def voice_mode():
                 navigate("failure")
 
 
-def form_mode(redirection=False):
+def form_mode():
     """
     Placeholder Form Mode page.
     """
@@ -1504,7 +1507,7 @@ def form_mode(redirection=False):
     background()
 
     company_logo()
-    if redirection:
+    if st.session_state.redirect:
         section_header(
             "Additional Information Required",
             "⚠️"
@@ -1556,13 +1559,16 @@ def form_mode(redirection=False):
         use_container_width=True,
     ):
         result = save_enquiry()
+        st.session_state.redirect = False
         if result[0]:
             st.session_state.submission_id = result[1]
-            st.session_state.page = "success"
-            st.rerun()
+            navigate("success")
+            # st.session_state.page = "success"
+            # st.rerun()
         else:
-            st.session_state.page = "failure"
-            st.rerun()
+            navigate("failure")
+            # st.session_state.page = "failure"
+            # st.rerun()
 
     # validation_panel()
 
@@ -1572,6 +1578,7 @@ def form_mode(redirection=False):
         "⬅ Back",
         use_container_width=True
     ):
+        st.session_state.redirect = False
         navigate("mode")
 
 
