@@ -521,7 +521,7 @@ def background():
 def company_logo():
 
     st.image(
-        "assets/img.png",
+        "assets/logo.jpeg",
         width=140
     )
 
