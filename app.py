@@ -1002,6 +1002,7 @@ def mode_selection():
         ):
 
             if st.session_state.mode == "voice":
+                st.session_state.audio_file = None
                 navigate("voice")
 
             elif st.session_state.mode == "form":
@@ -1291,7 +1292,6 @@ def voice_mode():
     Voice mode page
     :return:
     """
-    st.session_state.audio_file = None
 
     background()
 
@@ -1377,20 +1377,14 @@ def voice_mode():
         st.write("")
 
         if st.button(
-
             "✨ Process Recording",
-
             use_container_width=True
 
         ):
-
+        # -------------------------------------------------
+        # Processing
+        # -------------------------------------------------
             st.session_state.processing = True
-
-            # st.rerun()
-
-    # -------------------------------------------------
-    # Processing
-    # -------------------------------------------------
 
             with st.status(
                     "🎤 Processing Recording...",
@@ -1450,82 +1444,6 @@ def voice_mode():
                 else:
                     navigate("failure")
                 # navigate("success")
-
-
-        # if "staff_name" in st.session_state.missing_fields:
-        #     data["staff_name"] = st.text_input(
-        #         "Staff Name *",
-        #         value=data["staff_name"]
-        #     )
-        #
-        # if "customer_name" in st.session_state.missing_fields:
-        #     data["customer_name"] = st.text_input(
-        #         "Customer Full Name *",
-        #         value=data["customer_name"]
-        #     )
-        #
-        # if "customer_interest" in st.session_state.missing_fields:
-        #     data["customer_interest"] = st.text_area(
-        #         "Customer Interest *",
-        #         value=data["customer_interest"]
-        #     )
-        #
-        # if "nature_of_enquiry" in st.session_state.missing_fields:
-        #     data["nature_of_enquiry"] = st.text_area(
-        #         "Nature of Enquiry *",
-        #         value=data["nature_of_enquiry"]
-        #     )
-        #
-        # if "status" in st.session_state.missing_fields:
-        #
-        #     options = [
-        #
-        #         "New",
-        #
-        #         "Pending",
-        #
-        #         "In Progress",
-        #
-        #         "Escalated",
-        #
-        #         "Resolved",
-        #
-        #         "Closed"
-        #
-        #     ]
-        #
-        #     current = data["status"]
-        #
-        #     if current not in options:
-        #         current = "New"
-        #
-        #     data["status"] = st.selectbox(
-        #
-        #         "Status",
-        #
-        #         options,
-        #
-        #         index=options.index(current)
-        #
-        #     )
-        #
-        # if "contact" in st.session_state.missing_fields:
-        #     phone_col, email_col = st.columns(2)
-        #
-        #     with phone_col:
-        #         data["phone"] = st.text_input(
-        #
-        #             "Phone Number"
-        #
-        #         )
-        #
-        #     with email_col:
-        #         data["email"] = st.text_input(
-        #
-        #             "Email Address"
-        #
-        #         )
-
     divider()
 
     can_continue = submission_is_valid()
@@ -1547,22 +1465,22 @@ def voice_mode():
                 disabled=not can_continue,
                 use_container_width=True
         ):
-
-            response = save_enquiry(
-                st.session_state.submission_data
-            )
-
-            if response[0]:
-
-                st.session_state.submission_id = (
-                    response[1]
-                )
-
-                navigate("success")
-
-            else:
-                st.session_state.error_message = response[1]
-                navigate("failure")
+            pass
+            # response = save_enquiry(
+            #     st.session_state.submission_data
+            # )
+            #
+            # if response[0]:
+            #
+            #     st.session_state.submission_id = (
+            #         response[1]
+            #     )
+            #
+            #     navigate("success")
+            #
+            # else:
+            #     st.session_state.error_message = response[1]
+            #     navigate("failure")
 
 
 def form_mode():
