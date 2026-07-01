@@ -12,7 +12,7 @@ Backend functions currently contain mock implementations.
 Replace them with real API/database calls later.
 ==========================================================
 """
-
+from fileinput import filename
 # ==========================================================
 # IMPORTS
 # ==========================================================
@@ -20,6 +20,9 @@ Replace them with real API/database calls later.
 from pathlib import Path
 from datetime import date, datetime
 import re
+import io
+import os
+import boto3
 import time
 import uuid
 import json
@@ -30,6 +33,7 @@ import pandas as pd
 from groq import Groq
 from dotenv import load_dotenv
 from streamlit_mic_recorder import mic_recorder
+from botocore.exceptions import NoCredentialsError
 
 
 load_dotenv()
@@ -43,6 +47,10 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="collapsed"
 )
+
+s3 = boto3.client('s3',
+                  aws_access_key_id=os.getenv("AWS_ACCESS_KEY"),
+                  aws_secret_access_key=os.getenv("AWS_SECRET_KEY"))
 
 def submission_is_valid():
     """
@@ -248,8 +256,14 @@ def parse_audio(audio):
 
 def save_enquiry(data = st.session_state.submission_data):
     """
-    Pretend to save an enquiry.
+    Save an enquiry.
     """
+
+    file_name = "IvyCrmEnquiry.xlsx"
+    bucket_name = 'crm-enquiries-670422575422-eu-north-1-an'
+    file_stream = io.BytesIO()
+    s3.download_fileobj(bucket_name, file_name, file_stream)
+    file_stream.seek(0)
 
     id_ = datetime.now().strftime("%Y%m%d%H:%M")
     new_row = {
@@ -268,9 +282,16 @@ def save_enquiry(data = st.session_state.submission_data):
     }
 
     try:
-        df = pd.read_excel("enq.xlsx")
+        df = pd.read_excel(file_stream)
         df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
-        df.to_excel("enq.xlsx", index=False)
+
+        updated_file = io.BytesIO()
+        with pd.ExcelWriter(updated_file, engine="openpyxl") as writer:
+            df.to_excel(writer, index=False)
+        updated_file.seek(0)
+        s3.upload_fileobj(updated_file, bucket_name, file_name)
+    except NoCredentialsError:
+        return False, "#####"
     except Exception as e:
         return False, "00000"
     else:
