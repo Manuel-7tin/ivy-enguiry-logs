@@ -1835,7 +1835,7 @@ def failure_page():
 
         "Please try again or contact the developer.",
 
-        "Error msg: " + st.session_state.error_message,
+        f"Error msg: {st.session_state.error_message}",
 
         success=False
 
