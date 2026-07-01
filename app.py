@@ -174,10 +174,15 @@ REQUIRED_FIELDS = {
 
 def download_enquiries():
     """
-    Placeholder download function.
+    Downloads all saved enquiries.
     """
 
-    return b"Mock enquiry export"
+    file_name = "IvyCrmEnquiry.xlsx"
+    bucket_name = 'crm-enquiries-670422575422-eu-north-1-an'
+    file_stream = io.BytesIO()
+    s3.download_fileobj(bucket_name, file_name, file_stream)
+    file_stream.seek(0)
+    return file_stream
 
 
 def upload_audio(audio):
@@ -714,7 +719,7 @@ def home_screen():
 
     with center:
 
-        company_logo()
+        # company_logo()
 
         hero(
             title="Ivy League Associates",
@@ -762,15 +767,20 @@ def home_screen():
 
     with col2:
 
-        enquiries = download_enquiries()
-
-        st.download_button(
+        if st.button(
             "📥 Download Filled Enquiries",
-            enquiries,
-            "enquiries.csv",
-            "text/csv",
             use_container_width=True
-        )
+        ):
+            navigate("download")
+        # enquiries = download_enquiries
+
+        # st.download_button(
+        #     "📥 Download Filled Enquiries",
+        #     download_enquiries(),
+        #     "enquiries.xlsx",
+        #     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        #     use_container_width=True
+        # )
 
     st.write("")
     divider()
@@ -1614,6 +1624,68 @@ def form_mode():
         navigate("mode")
 
 
+def download_page():
+    background()
+    company_logo()
+
+    hero(
+        title="Download Centre",
+        subtitle=(
+            "Generate and download previously "
+            "submitted customer enquiries."
+        ),
+        signature=""
+    )
+
+    divider()
+
+    st.info(
+        "Preparing your enquiries..."
+    )
+
+    with st.status(
+        "Loading enquiries...",
+        expanded=True
+    ) as status:
+        st.write("Retrieving submissions...")
+        enquiries = download_enquiries()
+        st.write("Preparing Excel file...")
+        status.update(
+            label="Ready",
+            state="complete"
+        )
+
+    st.success(
+        "Your file is ready."
+    )
+
+    st.download_button(
+        "⬇ Download Enquiries",
+        enquiries,
+        "customer_enquiries.xlsx",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        use_container_width=True,
+        type="primary"
+    )
+    st.write("")
+    left, right = st.columns(2)
+
+    with left:
+        if st.button(
+            "🏠 Return Home",
+            use_container_width=True
+        ):
+            navigate("home")
+
+    with right:
+        if st.button(
+            "➕ New Submission",
+            use_container_width=True
+        ):
+            reset_submission()
+            navigate("mode")
+
+
 def success_page():
 
     background()
@@ -1788,3 +1860,5 @@ elif st.session_state.page == "success":
     success_page()
 elif st.session_state.page == "failure":
     failure_page()
+elif st.session_state.page == "download":
+    download_page()
