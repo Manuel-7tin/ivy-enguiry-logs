@@ -262,8 +262,6 @@ def save_enquiry(data = st.session_state.submission_data):
     Save an enquiry.
     """
 
-    return False, "#####"
-
     file_name = "IvyCrmEnquiry.xlsx"
     bucket_name = 'crm-enquiries-670422575422-eu-north-1-an'
     file_stream = io.BytesIO()
