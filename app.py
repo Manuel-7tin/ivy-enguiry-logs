@@ -296,7 +296,7 @@ def save_enquiry(data = st.session_state.submission_data):
     # except NoCredentialsError:
     #     return False, "#####"
     except Exception as e:
-        return False, "e"#"00000"
+        return False, e#"00000"
     else:
         return True, id_
     # return {
@@ -1552,15 +1552,16 @@ def voice_mode():
                 st.session_state.submission_data
             )
 
-            if response["success"]:
+            if response[0]:
 
                 st.session_state.submission_id = (
-                    response["submission_id"]
+                    response[1]
                 )
 
                 navigate("success")
 
             else:
+                st.session_state.error_message = response[1]
                 navigate("failure")
 
 
