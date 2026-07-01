@@ -204,9 +204,7 @@ def upload_audio(audio):
 
 def generate_presigned_url(file):
     """
-    Placeholder.
-
-    Replace with cloud storage implementation.
+   Supposed to be fo cloud storage implementation.
     """
 
     return "https://example.com/mock-file"
@@ -216,7 +214,7 @@ def parse_audio(audio):
     """
     Extract information from speech.
 
-    Replace with Whisper or another speech model.
+    Using Whisper.
     """
 
 
@@ -1263,11 +1261,38 @@ def followup_section():
 
     )
 
+def completion_percentage():
+    data = st.session_state.submission_data
+
+    required = [
+        "staff_name",
+        "customer_name",
+        "customer_interest",
+        "nature_of_enquiry",
+    ]
+
+    completed = sum(
+        bool(data[field].strip())
+        for field in required
+    )
+
+    # Phone OR Email counts as one requirement
+    if data["phone"].strip() or data["email"].strip():
+        completed += 1
+
+    total = len(required) + 1
+
+    return completed / total
+
 # ==========================================================
 # VOICE MODE
 # ==========================================================
 
 def voice_mode():
+    """
+    Voice mode page
+    :return:
+    """
     st.session_state.audio_file = None
 
     background()
@@ -1543,7 +1568,7 @@ def voice_mode():
 
 def form_mode():
     """
-    Placeholder Form Mode page.
+    Form Mode page.
     """
 
     background()
@@ -1580,6 +1605,14 @@ def form_mode():
     followup_section()
 
     divider()
+
+    # progress = completion_percentage()
+    #
+    # st.progress(progress)
+    #
+    # st.caption(
+    #     f"{int(progress * 100)}% Complete"
+    # )
 
     data = st.session_state.submission_data
     is_valid, errors = required_fields_complete()
