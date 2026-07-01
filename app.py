@@ -293,10 +293,10 @@ def save_enquiry(data = st.session_state.submission_data):
             df.to_excel(writer, index=False)
         updated_file.seek(0)
         s3.upload_fileobj(updated_file, bucket_name, file_name)
-    except NoCredentialsError:
-        return False, "#####"
+    # except NoCredentialsError:
+    #     return False, "#####"
     except Exception as e:
-        return False, "00000"
+        return False, "e"#"00000"
     else:
         return True, id_
     # return {
@@ -1639,6 +1639,7 @@ def form_mode():
             # st.session_state.page = "success"
             # st.rerun()
         else:
+            st.session_state.error_message = result[1]
             navigate("failure")
             # st.session_state.page = "failure"
             # st.rerun()
@@ -1833,7 +1834,7 @@ def failure_page():
 
         "Submission Failed",
 
-        "Please try again or contact the developer.",
+        st.session_state.error_message, #"Please try again or contact the developer.",
 
         success=False
 
