@@ -225,10 +225,10 @@ def parse_audio(audio):
     )
     print(transcription.text)
 
-    message = "This is lucky, i just spoke to EmmanuelEbi-Fredrick, he called to find out what our lecture plan is like, his email is oled@gmail.com and i have plans to send him a file later"
+    # message = "This is lucky, i just spoke to EmmanuelEbi-Fredrick, he called to find out what our lecture plan is like, his email is oled@gmail.com and i have plans to send him a file later"
     with open("prompt.txt", mode="r") as f:
         prompt = f.read()
-    prompt = prompt.replace("{TRANSCRIPT}", message)
+    prompt = prompt.replace("{TRANSCRIPT}", transcription.text)
     completion = client.chat.completions.create(
         model="openai/gpt-oss-120b",
         messages=[
@@ -258,6 +258,8 @@ def save_enquiry(data = st.session_state.submission_data):
     """
     Save an enquiry.
     """
+
+    return False, "#####"
 
     file_name = "IvyCrmEnquiry.xlsx"
     bucket_name = 'crm-enquiries-670422575422-eu-north-1-an'
@@ -1256,6 +1258,7 @@ def followup_section():
 # ==========================================================
 
 def voice_mode():
+    st.session_state.audio_file = None
 
     background()
 
@@ -1407,7 +1410,13 @@ def voice_mode():
                 st.session_state.redirect = True
                 navigate("form")
             else:
-                navigate("success")
+                result = save_enquiry()
+                if result[0]:
+                    st.session_state.submission_id = result[1]
+                    navigate("success")
+                else:
+                    navigate("failure")
+                # navigate("success")
 
 
         # if "staff_name" in st.session_state.missing_fields:
@@ -1564,7 +1573,6 @@ def form_mode():
 
     data = st.session_state.submission_data
     is_valid, errors = required_fields_complete()
-    print(is_valid, errors)
     if is_valid and contact_information_valid(data.get("phone", "08169957942"), data.get("email", "eguio@gmail.com")):
         pass
     else:
