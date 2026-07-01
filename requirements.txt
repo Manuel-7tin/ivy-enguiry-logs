@@ -4,3 +4,4 @@ pandas>=3.0.3
 streamlit>=1.56.0
 streamlit-mic-recorder>=0.0.8
 boto3>=.1.43.38
+openpyxl>=3.1.5

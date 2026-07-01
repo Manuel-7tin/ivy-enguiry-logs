@@ -1833,9 +1833,9 @@ def failure_page():
 
     status_message(
 
-        "Submission Failed",
+        "Please try again or contact the developer.",
 
-        st.session_state.error_message, #"Please try again or contact the developer.",
+        "Error msg: " + st.session_state.error_message,
 
         success=False
 
